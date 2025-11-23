@@ -2050,6 +2050,7 @@ document.addEventListener('keyup', e =>
 // ---------- Finalize capture ----------
 async function finalizeCapture_Keyboard(input, deviceIndex = 1)
 {
+    //input here is the row
     if (!input) return;
     recordingActive = false;
 
@@ -2060,7 +2061,6 @@ async function finalizeCapture_Keyboard(input, deviceIndex = 1)
     const normalKeys = pressedKeys.filter(k =>
         !modifierCodes.has(k) && !Array.from(mouseButtons.values()).includes(k)
     );
-
     let isValid = true;
 
     // Rule 1: No more than one mouse button
@@ -2285,7 +2285,8 @@ function updateBindRow(bindRow = currentlySelectedKeybindElement)
             if (bindValue)
             {
                 const isDefaultBind = (bindValue === defaultBind && bind.getActivationMode() === bind.getDefaultActivationMode());
-                bindValueDiv.appendChild(renderKeybindKeys(bindValue ? `Device ${ bindDevice }: ${ bindValue }` : ``, isDefaultBind));
+                const bindKeys = renderKeybindKeys(bindValue ? `Device ${ bindDevice }: ${ bindValue }` : ``, isDefaultBind);
+                bindValueDiv.appendChild(bindKeys);
                 if (bindValueDiv.classList.contains('awaiting')) bindValueDiv.classList.remove('awaiting');
             }
         }
@@ -2788,6 +2789,7 @@ function onClickRecordKeybind(e)
             }
             if (countdown <= 0)
             {
+
                 console.warn("No input detected — cancelling keybind recording.");
                 cancelRecordBind(); // your cancel function
                 clearInterval(recordTimeout);
@@ -2811,24 +2813,28 @@ function cancelRecordTimer()
 function cancelRecordBind()
 {
     const currentBind = getCurrentBindFromSelectedRow().getBind() || "";
-    switch (InputState.current)
-    {
-        case InputModeSelection.CONTROLLER:
-            finalizeCapture_Controller(currentBind);
-            break;
-        case InputModeSelection.JOYSTICK:
-            finalizeCapture_Joystick(currentBind);
-            break;
-        case InputModeSelection.KEYBOARD:
-            finalizeCapture_Keyboard(currentlySelectedKeybindElement)
-            break;
+    recordingActive = false;
 
-        default:
-            break;
-    }
-    finalizeCapture_Controller();
+    const valueDiv = currentlySelectedKeybindElement?.querySelector('.keybind__value');
+    const bindVal = currentlySelectedKeybindElement.dataset;
+    const actionName = bindVal.actionName;
+    const actionObj = actionMapsMasterList.find(a => a.getActionName() === actionName);
+
+    valueDiv.innerHTML !== '' && (valueDiv.innerHTML = '');
+    valueDiv.appendChild(renderKeybindKeys(actionObj.getBind(), actionObj.getBind() === actionObj.getDefaultBind()));
+    valueDiv.classList.remove('awaiting');
+
+    // // Reset capture state
+    currentlySelectedKeybindElement.currentKeys = new Set();
+    currentlySelectedKeybindElement.currentKeysOrdered = [];
+    currentlySelectedKeybindElement.classList.remove('recording');
+    activeCapture = null;
+
+    updateBindRow(currentlySelectedKeybindElement);
 }
 //#region NavBar Buttons
+
+
 
 function onClickNavBar(e)
 {
