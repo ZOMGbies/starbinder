@@ -589,20 +589,6 @@ class MappedAction
             this.setDefaultActivationMode(activtationType, InputModeSelection.JOYSTICK)
         }
 
-
-        // Find index of existing entry with the same actionName
-        // const existingIndex = actionMapsMasterList.findIndex(a => a.actionName === this.actionName);
-
-        // if (existingIndex >= 0)
-        // {
-        //     // Replace existing entry in-place
-        //     actionMapsMasterList[existingIndex] = this;
-        // } else
-        // {
-        //     // Push new entry
-        //     actionMapsMasterList.push(this);
-        // }
-
     }
 
     // ===== getters/setters =====
@@ -643,11 +629,10 @@ class MappedAction
     getDefaultBind(state = InputState.current)
     {
         return this.bind[state].defaultBind;
-        // return this.bind[state][0];
     }
     setDefaultBind(state = InputState.current, bindString)
     {
-        if (bindString && !this.bind[state].defaultBind && this.bind[state].defaultBind != bindString) this.bind[state].defaultBind = bindString;
+        if (!this.bind[state].defaultBind && this.bind[state].defaultBind != bindString) this.bind[state].defaultBind = bindString;
     }
     getBindDevice(state = InputState.current)
     {
@@ -1472,9 +1457,59 @@ function exportMappedActionsToXML(actionMapsMasterList)
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
     xml += `<ActionMaps version="1" optionsVersion="2" rebindVersion="2" profileName="${ bindingsProfileName }">\n`;
 
-    // Optional: basic header scaffold (mirroring your example)
     xml += ` <CustomisationUIHeader label="${ bindingsProfileName }" description="" image="">\n`;
-    xml += `  <devices>\n   <keyboard instance="1"/>\n   <mouse instance="1"/>\n   <joystick instance="1"/>\n  </devices>\n`;
+
+    // --- DEVICE BLOCK ---
+    xml += `  <devices>\n`;
+
+    const keyboardDevices = getUsedDevicesForType(InputModeSelection.KEYBOARD);
+    const mouseDevices = getUsedDevicesForType(InputModeSelection.MOUSE);
+    const joystickDevices = getUsedDevicesForType(InputModeSelection.JOYSTICK);
+    const controllerDevices = getUsedDevicesForType(InputModeSelection.CONTROLLER);
+    function getUsedDevicesForType(inputType)
+    {
+        const devicesBound = new Set();
+
+        for (const actionObj of actionMapsMasterList)
+        {
+            // Skip default binds
+            if (isDefaultBind(actionObj, inputType))
+                continue;
+
+            const bind = actionObj.getBind(inputType);
+            if (!bind)
+                continue;
+
+            const deviceIndex = actionObj.getBindDevice(inputType);
+            if (deviceIndex !== undefined && deviceIndex !== null)
+            {
+                console.log(actionObj.getActionName());
+                devicesBound.add(deviceIndex);
+            }
+        }
+
+        return [...devicesBound].sort((a, b) => a - b);
+    }
+
+    // Keyboard – usually just 1
+    for (const idx of keyboardDevices)
+        xml += `   <keyboard instance="${ idx }"/>\n`;
+
+    // Mouse – same deal
+    for (const idx of mouseDevices)
+        xml += `   <mouse instance="${ idx }"/>\n`;
+
+    // Controller/gamepad
+    for (const idx of controllerDevices)
+        xml += `   <gamepad instance="${ idx }"/>\n`;
+
+    // Joysticks (flight sticks etc.)
+    for (const idx of joystickDevices)
+        xml += `   <joystick instance="${ idx }"/>\n`;
+
+    xml += `  </devices>\n`;
+    // --- END DEVICE BLOCK ---
+
     xml += ` </CustomisationUIHeader>\n`;
     xml += ` <modifiers />\n`;
 
@@ -1836,12 +1871,17 @@ function updatefilteredNames()
 
         if (conflictsToggle?.checked)
         {
-            // Step 1: Group items by trimmed keybind
+            // Step 1: Group items by bind + device index
             const bindGroups = new Map();
+
             filtered.forEach(item =>
             {
-                const key = item.getBind()?.trim();
-                if (!key) return; // skip unbound
+                const bind = item.getBind();
+                if (!bind) return; // skip unbound
+
+                const device = item.getBindDevice();
+                const key = `${ bind }|${ device }`;
+
                 if (!bindGroups.has(key)) bindGroups.set(key, []);
                 bindGroups.get(key).push(item);
             });
@@ -1849,9 +1889,10 @@ function updatefilteredNames()
             // Step 2: Keep only groups with conflicts (more than 1 item)
             const conflictGroups = Array.from(bindGroups.values()).filter(group => group.length > 1);
 
-            // Step 3: Flatten the groups back into filtered list, grouped by keybind
+            // Step 3: Flatten back out
             filtered = conflictGroups.flat();
         }
+
     }
     filteredNames = filtered.map(item => item.getActionName());
 
@@ -2526,10 +2567,10 @@ function onClickKeybindElement(e)
     }
     // Check for CTRL + ALT + click
     //get default
-    const defaultBind = b.getDefaultBind();
-    if (defaultBind && currentlySelectedKeybindElement === clickedRow && e.ctrlKey && e.altKey)
+    const defaultBind = b.getDefaultBind() || "";
+    if (currentlySelectedKeybindElement === clickedRow && e.ctrlKey && e.altKey)
     {
-        b.setBind(InputState.current, defaultBind.trim());
+        b.setBind(InputState.current, defaultBind);
         updateBindRow();
     }
 }
@@ -3506,6 +3547,7 @@ function onClickFooterButtons(event)
 }
 async function onClickExportKeybinds()
 {
+    onClickBindModeToggle("binder");
     const profileName = await promptExportKeybinds();
     if (!profileName) return; // cancelled
     bindingsProfileName = profileName;
@@ -3519,6 +3561,7 @@ async function onClickExportKeybinds()
 
 async function onClickImportKeybinds()
 {
+    onClickBindModeToggle("binder");
     // Copy the path to the clipboard
     const pathToCopy = `C:\\Program Files\\Roberts Space Industries\\StarCitizen\\LIVE\\user\\client\\0\\controls\\mappings`;
     try
