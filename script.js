@@ -203,6 +203,8 @@ let bindMode = "binder";
 
 let bindingsProfileName = "StarBinder"
 
+const headerImage = document.querySelector('.headerImage');
+
 const keybindSearch = document.getElementById(`keybindSearch`);
 
 const btnKeybindSearch = document.querySelector('.searchbar-button');
@@ -850,9 +852,18 @@ async function init()
             return false;
         }
     }, true); // use capture mode
-
+    headerImage.addEventListener("dblclick", () =>
+    {
+        if (!document.fullscreenElement)
+        {
+            document.documentElement.requestFullscreen();
+        } else
+        {
+            document.exitFullscreen();
+        }
+    });
     //search tool
-    initFuse();
+    // initFuse();
 
     if (localisedLanguage !== "english") await jsonPromise;
     btnSelectInput_Keyboard.click()
@@ -1740,33 +1751,32 @@ function performSearch()
         return;
     }
 
-    const results = fuse.search(query);
-    filteredNames = results.map(r => r.item.actionName);
+    // const results = fuse.search(query);
+    // filteredNames = results.map(r => r.item.actionName);
     updatefilteredNames(); // assumes showAllBinds can take array of names
 }
-function initFuse()
-{
-    const list = actionMapsMasterList.map(a => ({
-        actionName: a.getActionName(),
-        localName: getLocalisedLabel(a),
-        parsedLabel: getActionLabel(a.getActionName()),
-        // description: a.getDescription(),
-        keywords: a.getKeywords().join(' ')
-    }));
+// function initFuse()
+// {
+//     const list = actionMapsMasterList.map(a => ({
+//         actionName: a.getActionName(),
+//         localName: getLocalisedLabel(a),
+//         parsedLabel: getActionLabel(a.getActionName()),
+//         // description: a.getDescription(),
+//         keywords: a.getKeywords().join(' ')
+//     }));
 
-    fuse = new Fuse(list, {
-        keys: [
-            { name: 'actionName', weight: 0.6 },
-            { name: 'localName', weight: 0.7 },
-            { name: 'parsedLabel', weight: 0.3 },
-            // { name: 'description', weight: 0.2 },
-            { name: 'keywords', weight: 0.3 }
-        ],
-        threshold: 0.2,
-        includeScore: true
-    });
-
-}
+//     fuse = new Fuse(list, {
+//         keys: [
+//             { name: 'actionName', weight: 0.6 },
+//             { name: 'localName', weight: 0.7 },
+//             { name: 'parsedLabel', weight: 0.3 },
+//             // { name: 'description', weight: 0.2 },
+//             { name: 'keywords', weight: 0.3 }
+//         ],
+//         threshold: 0.2,
+//         includeScore: true
+//     });
+// }
 // Main filtering function
 function updatefilteredNames()
 {
@@ -1834,39 +1844,43 @@ function updatefilteredNames()
         if (selectedTags.length > 0)
         {
             const normalizedTags = selectedTags.map(t => t.toLowerCase());
+
             filtered = filtered.filter(item =>
-                item.getKeywords().some(k => normalizedTags.includes(k?.toLowerCase()))
-            );
+            {
+                const itemKeywords = item.getKeywords().map(k => k?.toLowerCase());
+                return normalizedTags.every(tag => itemKeywords.includes(tag));
+            });
         }
+
 
         // --- Search filtering ---
         if (searchQuery)
         {
 
-            console.log("Forced fuse off, because it isn't searching as well as it should for some reason");
-            if (fuse && !fuse)
+            // console.log("Forced fuse off, because it isn't searching as well as it should for some reason");
+            // if (fuse && !fuse)
+            // {
+            //     const results = fuse.search(searchQuery);
+            //     const searchMatches = results.map(r =>
+            //         actionMapsMasterList.find(a => a.getActionName() === r.item.actionName)
+            //     );
+            //     filtered = filtered.filter(f => searchMatches.includes(f));
+            // } else
+            // {
+            filtered = filtered.filter(item =>
             {
-                const results = fuse.search(searchQuery);
-                const searchMatches = results.map(r =>
-                    actionMapsMasterList.find(a => a.getActionName() === r.item.actionName)
-                );
-                filtered = filtered.filter(f => searchMatches.includes(f));
-            } else
-            {
-                filtered = filtered.filter(item =>
-                {
-                    const name = item.getActionName().toLowerCase();
-                    // const desc = item.getDescription().toLowerCase();
-                    const keywords = item.getKeywords().map(k => k.toLowerCase());
+                const name = item.getActionName().toLowerCase();
+                // const desc = item.getDescription().toLowerCase();
+                const keywords = item.getKeywords().map(k => k.toLowerCase());
 
-                    const localizedName = getLocalisedLabel(item).toLowerCase();
+                const localizedName = getLocalisedLabel(item).toLowerCase();
 
-                    return name.includes(searchQuery) ||
-                        localizedName.includes(searchQuery) ||
-                        // desc.includes(searchQuery) ||
-                        keywords.some(k => k.includes(searchQuery));
-                });
-            }
+                return name.includes(searchQuery) ||
+                    localizedName.includes(searchQuery) ||
+                    // desc.includes(searchQuery) ||
+                    keywords.some(k => k.includes(searchQuery));
+            });
+            // }
         }
 
         if (conflictsToggle?.checked)
@@ -2143,7 +2157,7 @@ async function finalizeCapture_Keyboard(input, deviceIndex = 1)
             const actionObj = actionMapsMasterList.find(a => a.getActionName() === actionName);
             valueDiv.innerHTML !== '' && (valueDiv.innerHTML = '');
             valueDiv.appendChild(renderKeybindKeys(actionObj.getBind(), actionObj.getBind() === actionObj.getDefaultBind()));
-            valueDiv.classList.remove('awaiting');
+            rowDiv.classList.remove('awaiting');
         }
         return;
     }
@@ -2297,6 +2311,7 @@ async function renderBindRow(b)
     setActivationModeButtonIcon(activationModeIconDiv, b)
 
     const consoleInputDiv = document.createElement('div');
+    consoleInputDiv.classList.add('consoleInputDiv')
     addConsoleInputField(b, consoleInputDiv);
 
     newRow.appendChild(typeDiv);
@@ -2328,7 +2343,7 @@ function updateBindRow(bindRow = currentlySelectedKeybindElement)
                 const isDefaultBind = (bindValue === defaultBind && bind.getActivationMode() === bind.getDefaultActivationMode());
                 const bindKeys = renderKeybindKeys(bindValue ? `Device ${ bindDevice }: ${ bindValue }` : ``, isDefaultBind);
                 bindValueDiv.appendChild(bindKeys);
-                if (bindValueDiv.classList.contains('awaiting')) bindValueDiv.classList.remove('awaiting');
+                if (bindRow.classList.contains('awaiting')) bindRow.classList.remove('awaiting');
             }
         }
 
@@ -2725,6 +2740,7 @@ function onLoseFocusConsoleInput(e)
 {
     if (e.target)
     {
+        onSubmitKeybindConsole(e);
         e.target.blur();
         e.target.value = null;
     }
@@ -2816,7 +2832,7 @@ function onClickRecordKeybind(e)
         if (valueDiv)
         {
             valueDiv.textContent = 'Awaiting input…';
-            valueDiv.classList.add('awaiting');
+            rowDiv.classList.add('awaiting');
         }
 
         // --- Start auto-cancel timer ---
@@ -2863,7 +2879,7 @@ function cancelRecordBind()
 
     valueDiv.innerHTML !== '' && (valueDiv.innerHTML = '');
     valueDiv.appendChild(renderKeybindKeys(actionObj.getBind(), actionObj.getBind() === actionObj.getDefaultBind()));
-    valueDiv.classList.remove('awaiting');
+    currentlySelectedKeybindElement.classList.remove('awaiting');
 
     // // Reset capture state
     currentlySelectedKeybindElement.currentKeys = new Set();
@@ -3166,8 +3182,8 @@ function onClickSelectActivationMode(e)
     {
         const btnRect = btn.getBoundingClientRect();
         const containerRect = rowContainer.getBoundingClientRect();
-        const offsetTop = btnRect.bottom - containerRect.top + rowContainer.scrollTop + 4;
-        const offsetLeft = btnRect.left - containerRect.left + rowContainer.scrollLeft;
+        const offsetTop = btnRect.bottom - containerRect.top + rowContainer.scrollTop + 4 - 30;
+        const offsetLeft = btnRect.left - containerRect.left + rowContainer.scrollLeft + 15;
         dropdown.style.top = `${ offsetTop }px`;
         dropdown.style.left = `${ offsetLeft }px`;
     }
@@ -3283,44 +3299,7 @@ function setActivationModeButtonIcon(buttonObject, bindObject)
     // Add icon to button
     buttonObject.appendChild(iconClone);
 }
-// function setActivationModeButtonIcon(buttonObject, bindObject)
-// {
-//     buttonObject.innerHTML !== '' && (buttonObject.innerHTML = '');
 
-
-//     const objectActivationMode = bindObject.getActivationMode();
-//     const activationMode = objectActivationMode ? objectActivationMode : bindObject.getDefaultActivationMode();
-
-
-
-//     const iconFileName = activationMode ? activationMode : `none`;
-//     const iconPath = `./assets/tapIcons/icon_${ iconFileName }.svg`;
-
-//     // Check cache
-//     if (!cachedActivationModeIcons[iconFileName])
-//     {
-//         const img = document.createElement('img');
-//         img.classList.add('activation-icon');
-//         img.src = iconPath;
-
-//         // store original image
-//         cachedActivationModeIcons[iconFileName] = img;
-//     }
-//     // Clone the cached image so you don't move it around in DOM
-//     const iconClone = cachedActivationModeIcons[iconFileName].cloneNode();
-//     //the below line was pre cached version
-//     // icon.src = iconFileName ? `./assets/tapIcons/icon_${ iconFileName }.svg` : `./assets/tapIcons/icon_all.svg`
-
-//     const tt_text = activationModeDescriptions[activationMode] || "";
-
-//     const activationModeParsed = activationMode.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-
-//     buttonObject.title = `${ activationModeParsed }${ tt_text }`;
-
-//     // Add to the div
-//     // buttonObject.appendChild(icon);
-//     buttonObject.appendChild(iconClone);
-// }
 
 function onHoldClearKeybind(e)
 {
@@ -3373,6 +3352,12 @@ function onClickFilterTag(e)
         const keyword = e.target.dataset.keyword;
         const isAlreadyActive = selectedTags.includes(keyword);
         selectedTags = isAlreadyActive ? [] : [keyword];
+        if (e.target.closest('.sub-tag'))
+        {
+            const parentTagKeyword = e.target.dataset.parentKeyword;
+            selectedTags.push(parentTagKeyword)
+        }
+        console.log(selectedTags);
         filterByTag(e.target);
     }
 }
@@ -3400,6 +3385,7 @@ function filterByTag(tag)
             selectedTags.length > 0 && selectedTags.map(k => k.toLowerCase()).includes(tagKeyword);
         tagDiv.classList.toggle('active', shouldBeActive);
     });
+
 
     updatefilteredNames();
 
@@ -3520,6 +3506,7 @@ function onShowSubcategoryTags()
         tag.classList.add('tag', 'sub-tag');
         tag.textContent = keyword;
         tag.dataset.keyword = keyword;
+        tag.dataset.parentKeyword = currentTag;
         wrapper.appendChild(tag);
     });
 
@@ -4790,7 +4777,7 @@ languageSelector.addEventListener("change", (e) =>
     localisedLanguage = e.target.value; // your global var for current language
 
     // If using Fuse, rebuild it for the new language:
-    initFuse();
+    // initFuse();
 
     // Optionally, re-render UI bindings with new localized labels
     showAllBinds(actionMapsMasterList);

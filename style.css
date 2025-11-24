@@ -111,7 +111,6 @@ CONTENT
     flex: 1;
     overflow-y: auto;
     min-height: 0;
-    background-color: var(--lighter-bg);
 
 }
 
@@ -121,9 +120,6 @@ CONTENT
     position: relative;
     width: min(max(var(--minDocWidth), 100%), var(--maxDocWidth) + 2*var(--border-thickness));
     height: 1040px;
-    /* max-height: 1100px; */
-    /* min-height: 846px; */
-
 }
 
 .content-keybinds {
@@ -138,8 +134,7 @@ CONTENT
     max-width: calc(var(--maxDocWidth) - 120px);
     height: 100%;
     box-sizing: border-box;
-
-    background-color: var(--lighter-bg);
+    /* This is the background behind each row*/
     background-image: url('./assets/ContainerBorder/centre.webp');
     background-size: cover;
     background-repeat: no-repeat;
@@ -364,7 +359,6 @@ img,
 }
 
 .footer {
-    background-color: var(--default-bg);
     padding: 10px;
     display: flex;
     align-items: flex-start;
@@ -770,7 +764,6 @@ KEYBIND AREA
 .keybind__row--selected .keybind__type {
 
     animation: glitch 0.3s ease-out;
-
 }
 
 @keyframes glitch {
@@ -785,18 +778,18 @@ KEYBIND AREA
         opacity: 0.9;
     }
 
-    45% {
+    50% {
         transform: translate(-2px, -3px);
+        opacity: 0.8;
+    }
+
+    60% {
         opacity: 0.8;
         filter: blur(1px)
     }
 
-    60% {
-        transform: translate(-1px, -1px);
-        opacity: 0.8;
-    }
-
 }
+
 
 
 /* Keybind value */
@@ -804,7 +797,6 @@ KEYBIND AREA
     font-size: 1.1rem;
     text-align: left;
     position: relative;
-    /* background-color: var(--rowBackground); */
     border-radius: 0.6rem;
     margin-left: 0.3rem;
     margin-right: 0.3rem;
@@ -817,26 +809,105 @@ KEYBIND AREA
     -ms-user-select: none;
 }
 
-/* Awaiting input state */
-.keybind__value.awaiting {
+.keybind__row.awaiting .keybind__value {
     font-family: 'Kiona', sans-serif;
-    background: rgba(0, 200, 255, 0.1);
-    border-radius: 0.25rem;
-    padding: 0.5rem 3rem;
-    animation: bgPulse 1.5s ease-in-out infinite;
-    text-align: left;
+    padding-left: 3rem;
+    color: var(--secondaryText);
+    /* display: flex;
+    justify-content: center;
+    align-items: center; */
 }
 
+:root {
+    --stripe-size: 100px;
+    --duration: 1s;
+}
 
-@keyframes bgPulse {
+/* Awaiting input state */
+.keybind__row.awaiting {
+    overflow: hidden;
+    position: relative;
 
-    0%,
-    100% {
-        background: rgba(0, 200, 255, 0.1);
+    &_inner {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        background: repeating-linear-gradient(45deg,
+                var(--accent) 25%,
+                var(--accent) 50%,
+                var(--accent2) 50%,
+                var(--accent2) 75%);
+        background-size: var(--stripe-size) var(--stripe-size);
+        background-clip: text;
+        animation: stripeBackgroundPosition var(--duration) linear infinite;
+        opacity: 0.07;
+
     }
 
-    50% {
-        background: rgba(0, 200, 255, 0.3);
+    &::before {
+        content: '';
+        position: absolute;
+
+        filter: blur(1px);
+        top: 0rem;
+        left: 0;
+        width: calc(100% + var(--stripe-size));
+        height: 100%;
+        background: repeating-linear-gradient(45deg,
+                var(--accent2) 25%,
+                var(--accent2) 50%,
+                var(--accent) 50%,
+                var(--accent) 75%);
+        background-size: var(--stripe-size) var(--stripe-size);
+        animation: stripeTransform var(--duration) linear infinite;
+        opacity: 0.07;
+        mask: linear-gradient(to bottom,
+                transparent 0%,
+                transparent 2%,
+                black 35%,
+                black 65%,
+                transparent 97%,
+                transparent 100%);
+    }
+
+    &::after {
+        position: absolute;
+        background: radial-gradient(ellipse at center, rgba(#1b2735, 0) 0%, #090a0f 100%);
+    }
+}
+
+.keybind__row.awaiting::before,
+.keybind__row.awaiting::after {
+    z-index: 0;
+    pointer-events: none;
+    /* ensure they never block inputs/buttons */
+}
+
+.keybind__row.awaiting>* {
+    position: relative;
+    z-index: 1;
+}
+
+@keyframes stripeTransform {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(calc(var(--stripe-size) * -1));
+    }
+}
+
+@keyframes stripeBackgroundPosition {
+    0% {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: calc(var(--stripe-size) * -1) 0;
     }
 }
 
@@ -967,7 +1038,7 @@ KEYWORD TAGS
 
 .sub-tag.active {
     background: var(--gradientEnd);
-    color: var(--secondary-text);
+    color: var(--secondaryText);
     border-color: var(--secondaryText);
     box-shadow: inset 0 -3px 8px #FFFFFF33;
 }
@@ -983,7 +1054,7 @@ KEYWORD TAGS
 
 .tag.active {
     background: var(--gradientEnd);
-    color: var(--secondary-text);
+    color: var(--secondaryText);
     border-color: var(--secondaryText);
     box-shadow: inset 0 -3px 8px #FFFFFF33;
 }
@@ -1228,6 +1299,7 @@ CONSOLE INPUT FIELD
     width: 90%;
     max-width: 900%;
     align-items: right;
+    /* align-self: center; */
 
     font-family: 'Consolas', monospace;
     color: var(--primaryText);
@@ -1238,7 +1310,7 @@ CONSOLE INPUT FIELD
     padding-left: 0.8rem;
 
     background-color: #1e3446;
-    margin: 0.3rem 0;
+    margin-bottom: 0.5rem;
 
     border-radius: 0.3rem;
     border-style: inset;
@@ -1253,40 +1325,15 @@ CONSOLE INPUT FIELD
     filter: brightness(1.08)
 }
 
+.keybind__consoleInput:focus {
+    outline: none;
+    border-color: var(--accent2);
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+}
 
-/*--------------------------------------------------------------
-KEYBIND DESCRIPTION BOX
---------------------------------------------------------------*/
-
-
-
-/*--------------------------------------------------------------
-ANIMATIONS
---------------------------------------------------------------*/
-@keyframes subtlePulse {
-    0% {
-        box-shadow: 0 0 1px var(--accent);
-    }
-
-    40% {
-        box-shadow: 0 0 3px var(--accent);
-    }
-
-    50% {
-        box-shadow: 0 0 7px var(--accent);
-    }
-
-    65% {
-        box-shadow: 0 0 5px var(--accent);
-    }
-
-    80% {
-        box-shadow: 0 0 3px var(--accent);
-    }
-
-    100% {
-        box-shadow: 0 0 1px var(--accent);
-    }
+.consoleInputDiv {
+    display: flex;
+    align-items: center;
 }
 
 /*--------------------------------------------------------------
@@ -1435,7 +1482,7 @@ MKB / CONTROLLER / JOYSTICK BUTTONS STYLE
 /* Dropdown items */
 .joystick-dropdown-item {
     font-family: 'Aileron', sans-serif;
-    color: var(--secondary-text);
+    color: var(--secondaryText);
     font-size: 0.7rem;
     letter-spacing: 0.1rem;
     text-transform: uppercase;
@@ -1632,48 +1679,6 @@ MKB / CONTROLLER / JOYSTICK BUTTONS STYLE
 /* ====================================== */
 /* MODAL */
 /* ====================================== */
-/* .confirm-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.55);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    backdrop-filter: blur(2px);
-}
-
-.confirm-box {
-    background: #0d1117;
-    color: #fff;
-    font-family: 'Consolas', monospace;
-    border-radius: 0.6rem;
-    padding: 1.2rem 1.5rem;
-    max-width: 22rem;
-    text-align: center;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-.confirm-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.confirm-buttons button {
-    background: var(--accent2, #3478f6);
-    color: #fff;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 0.4rem;
-    cursor: pointer;
-    font-family: inherit;
-    transition: filter 0.15s ease;
-} */
 .confirm-modal {
     position: fixed;
     inset: 0;
@@ -1758,23 +1763,41 @@ MKB / CONTROLLER / JOYSTICK BUTTONS STYLE
 
 .activation-dropdown {
     position: absolute;
-    background: #222;
-    border: 1px solid #555;
+    background: var(--secondary-bg);
+    background: #233140;
+    background: radial-gradient(ellipse, rgba(35, 49, 64, 1) 50%, rgba(27, 38, 50, 1) 100%);
+    border: 1px solid var(--accent2);
     border-radius: 6px;
-    padding: 4px 0;
-    color: #eee;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-    min-width: 140px;
-    z-index: 9999;
+    padding: 4px 4px;
+    color: #ccc;
+    font-family: "Aileron", monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.02rem;
+
+    box-shadow: -1px 3px 7px rgba(0, 0, 0, 0.4);
+    z-index: 9900;
 }
 
 .activation-dropdown div {
-    padding: 6px 10px;
+    padding: 5px 10px;
     cursor: pointer;
 }
 
 .activation-dropdown div:hover {
-    background: #333;
+    background: rgb(var(--accent-rgb)/0.1);
+    mask: linear-gradient(to bottom,
+            transparent 0%,
+            transparent 2%,
+            black 35%,
+            black 65%,
+            transparent 97%,
+            transparent 100%);
+
+    text-shadow:
+        0 0 3px rgba(0, 0, 0, 1);
+    color: var(--primaryText);
+    transition: all 0.1s ease;
+
 }
 
 /* ====================================== */
@@ -2024,7 +2047,7 @@ code {
 .modal-content p {
     font-family: "Aileron", sans-serif;
     font-size: 0.8rem;
-    color: var(--secondary-text);
+    color: var(--secondaryText);
     padding-left: 2rem;
     letter-spacing: 0.03rem;
     line-height: 1.7rem;
@@ -2582,13 +2605,6 @@ code {
     background-image: url("./assets/presetImages/starcitizenlogo_lowQ.webp");
 }
 
-
-
-
-
-
-
-
 .preset-btn {
     cursor: pointer;
     padding: 0.8rem;
@@ -2727,7 +2743,7 @@ code {
 #languageSelector {
     background: var(--secondary-bg) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="5"><polygon points="0,0 10,0 5,5" fill="white"/></svg>') no-repeat right 10px center;
     background-size: 10px 5px;
-    color: var(--secondary-text);
+    color: var(--secondaryText);
     border: 1px solid var(--accent2);
     border-radius: 0.5rem;
     padding: 4px 30px 4px 8px;
