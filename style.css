@@ -956,6 +956,10 @@ KEYBIND AREA
     background-position: center;
 }
 
+.button-activationMode:hover {
+    filter: brightness(1.1);
+    transform: translateY(1px);
+}
 
 
 
@@ -1053,10 +1057,11 @@ KEYWORD TAGS
 }
 
 .tag.active {
-    background: var(--gradientEnd);
-    color: var(--secondaryText);
-    border-color: var(--secondaryText);
-    box-shadow: inset 0 -3px 8px #FFFFFF33;
+    background: var(--accent);
+    filter: brightness(0.75);
+    color: #fff;
+    box-shadow: inset 0 -3px 11px #000000AA;
+    transition: all 0.3s ease;
 }
 
 .tag.readonly {
@@ -1078,6 +1083,8 @@ KEY STYLES
 
 
 .key {
+    height: 1.8rem;
+    min-width: 1.8rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -2546,7 +2553,7 @@ code {
     font-family: 'Gobold', sans-serif;
     letter-spacing: 0.1rem;
     text-transform: uppercase;
-    color: var(--primary-text);
+    color: var(--primaryText);
 }
 
 .button-sections {
@@ -2677,7 +2684,7 @@ code {
 
 .mode-toggle.finder {
     background: rgb(25, 83, 119);
-    color: var(--primary-text);
+    color: var(--primaryText);
 }
 
 .label {
@@ -2685,7 +2692,7 @@ code {
     font-family: 'Gobold', sans-serif;
     letter-spacing: 0.1rem;
     font-size: 0.8rem;
-    color: var(--primary-text);
+    color: var(--primaryText);
     text-transform: uppercase;
     transition: opacity 0.2s;
     pointer-events: none;
@@ -2913,8 +2920,4 @@ code {
     margin-left: 0.2rem;
     padding-bottom: 0.4rem;
     text-decoration: none;
-}
-
-body[="Star Binder"] {
-    color: green
 }

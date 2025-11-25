@@ -1791,6 +1791,7 @@ function updatefilteredNames()
         function matchesInput(b, d, inputFilter)
         {
             if (!b) return false;
+            b = b.toLowerCase();
             const modifierAliases = {
                 "alt": ["lalt", "ralt"],
                 "control": ["lctrl", "rctrl"],
@@ -1801,7 +1802,7 @@ function updatefilteredNames()
                 "thumbl": ["thumbl_up", "thumbl_down", "thumbl_right", "thumbl_left", "thumbl"],
                 "thumbr": ["thumbr_up", "thumbr_down", "thumbr_right", "thumbr_left", "thumbr"],
             };
-            const filter = inputFilter?.input?.trim();
+            const filter = inputFilter?.input?.toLowerCase().trim();
 
             // Expand filter to all acceptable matches
             const validInputs = modifierAliases[filter] || controllerStickAliases[filter] || [filter];
@@ -2000,7 +2001,6 @@ document.addEventListener('keydown', e =>
     e.stopPropagation();
     cancelRecordTimer();
     if (e.key === 'Meta' || e.repeat) return;
-
     const code = e.code;
     const isModifier = modifierCodes.has(code);
     const mouseNames = Array.from(mouseButtons.values());
@@ -2035,7 +2035,7 @@ document.addEventListener('keydown', e =>
     //this line
     if (valueDiv)
     {
-        const translated = activeCapture.currentKeysOrdered.map(code => translateKey(code));
+        const translated = activeCapture.currentKeysOrdered.map(keyCode => translateKey(code.toLowerCase()));
         const bindInProgress = translated.join('+');
         valueDiv.innerHTML !== '' && (valueDiv.innerHTML = '');
         valueDiv.appendChild(renderKeybindKeys(bindInProgress));
@@ -2108,13 +2108,11 @@ async function finalizeCapture_Keyboard(input, deviceIndex = 1)
     //input here is the row
     if (!input) return;
     recordingActive = false;
-
     // --- Validation logic ---
     const pressedKeys = input.currentKeysOrdered || [];
     const mouseKeys = pressedKeys.filter(k => Array.from(mouseButtons.values()).includes(k));
     const modifierKeys = pressedKeys.filter(k => modifierCodes.has(k));
-    const normalKeys = pressedKeys.filter(k =>
-        !modifierCodes.has(k) && !Array.from(mouseButtons.values()).includes(k)
+    const normalKeys = pressedKeys.filter(k => !modifierCodes.has(k) && !Array.from(mouseButtons.values()).includes(k)
     );
     let isValid = true;
 
@@ -3357,7 +3355,6 @@ function onClickFilterTag(e)
             const parentTagKeyword = e.target.dataset.parentKeyword;
             selectedTags.push(parentTagKeyword)
         }
-        console.log(selectedTags);
         filterByTag(e.target);
     }
 }
@@ -3554,7 +3551,6 @@ async function onClickImportKeybinds()
     try
     {
         await navigator.clipboard.writeText(pathToCopy);
-        console.log("Path copied to clipboard:", pathToCopy);
     } catch (err)
     {
         console.error("Failed to copy path to clipboard:", err);
