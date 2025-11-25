@@ -120,7 +120,7 @@ function translateKey(code)
     if (mouseMap[code]) return mouseMap[code];
 
     // Fallback: return raw code
-    return code;
+    return code.toLowerCase();
 }
 //#endregion
 
@@ -2035,7 +2035,7 @@ document.addEventListener('keydown', e =>
     //this line
     if (valueDiv)
     {
-        const translated = activeCapture.currentKeysOrdered.map(keyCode => translateKey(code.toLowerCase()));
+        const translated = activeCapture.currentKeysOrdered.map(code => translateKey(code));
         const bindInProgress = translated.join('+');
         valueDiv.innerHTML !== '' && (valueDiv.innerHTML = '');
         valueDiv.appendChild(renderKeybindKeys(bindInProgress));
