@@ -8134,5 +8134,65 @@
         "japanese": "現在の表示をリセットする",
         "korean": "현재 시점 초기화",
         "ukrainian": "Скинути поточний вигляд"
+    },
+    "ui_CIMFD_Quick_Action_Repair_All": {
+        "english": "Repair All",
+        "french": "Tout réparer",
+        "german": "Alles reparieren",
+        "italian": "Ripara tutto",
+        "spanish": "Reparar todo",
+        "brazillian": "Reparar tudo",
+        "chinese": "全部修理",
+        "japanese": "すべて修理",
+        "korean": "모두 수리",
+        "ukrainian": "Відремонтувати все"
+    },
+    "ui_hmd_toggle": {
+        "english": "HMD Toggle",
+        "french": "Basculer HMD",
+        "german": "HMD umschalten",
+        "italian": "Attiva/Disattiva HMD",
+        "spanish": "Alternar HMD",
+        "brazillian": "Alternar HMD",
+        "chinese": "切换 HMD",
+        "japanese": "HMD 切り替え",
+        "korean": "HMD 전환",
+        "ukrainian": "Перемкнути HMD"
+    },
+    "ui_hmd_recenter": {
+        "english": "HMD Recenter",
+        "french": "Recentrer HMD",
+        "german": "HMD neu zentrieren",
+        "italian": "Riposiziona HMD",
+        "spanish": "Recentrar HMD",
+        "brazillian": "Recentrar HMD",
+        "chinese": "重新居中 HMD",
+        "japanese": "HMD 再センタリング",
+        "korean": "HMD 재중심",
+        "ukrainian": "Перецентрувати HMD"
+    },
+    "ui_hmd_theater_mode_toggle": {
+        "english": "HMD Theatre Mode toggle",
+        "french": "Basculer le mode Théâtre HMD",
+        "german": "HMD-Theatermodus umschalten",
+        "italian": "Attiva/Disattiva modalità Teatro HMD",
+        "spanish": "Alternar modo Teatro HMD",
+        "brazillian": "Alternar modo Teatro HMD",
+        "chinese": "切换 HMD 剧院模式",
+        "japanese": "HMD シアターモード切り替え",
+        "korean": "HMD 극장 모드 전환",
+        "ukrainian": "Перемкнути театральний режим HMD"
+    },
+    "ui_hmd_lensDisplay_toggle": {
+        "english": "HMD Lens Display toggle",
+        "french": "Basculer l’affichage des lentilles HMD",
+        "german": "HMD-Linsenanzeige umschalten",
+        "italian": "Attiva/Disattiva visualizzazione lenti HMD",
+        "spanish": "Alternar visualización de lentes HMD",
+        "brazillian": "Alternar exibição de lentes HMD",
+        "chinese": "切换 HMD 镜片显示",
+        "japanese": "HMD レンズ表示切り替え",
+        "korean": "HMD 렌즈 표시 전환",
+        "ukrainian": "Перемкнути відображення лінз HMD"
     }
 }

@@ -5981,5 +5981,45 @@
             "camera - advanced camera controls",
             "camera"
         ]
+    },
+    "v_mfd_quick_action_repair_all": {
+        "label": "Repair All",
+        "description": "Activate self-repair for all destroyed items where available",
+        "keywords": [
+            "vehicles - multi function displays (mfds)",
+            "engineering"
+        ]
+    },
+    "hmd_toggle": {
+        "label": "HMD Toggle",
+        "description": "Enables/disables VR gameplay",
+        "keywords": [
+            "Other",
+            "VR"
+        ]
+    },
+    "hmd_recenter": {
+        "label": "HMD Recenter",
+        "description": "Recenters the VR headset",
+        "keywords": [
+            "Other",
+            "VR"
+        ]
+    },
+    "hmd_theater_mode_toggle": {
+        "label": "HMD: Theatre mode toggle",
+        "description": "Enables / Disables Theater Mode",
+        "keywords": [
+            "Other",
+            "VR"
+        ]
+    },
+    "hmd_lens_display_toggle": {
+        "label": "HMD: Lens display toggle",
+        "description": "Enables / Disables the Visor",
+        "keywords": [
+            "Other",
+            "VR"
+        ]
     }
 }

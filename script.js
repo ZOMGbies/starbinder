@@ -120,7 +120,7 @@ function translateKey(code)
     if (mouseMap[code]) return mouseMap[code];
 
     // Fallback: return raw code
-    return code.toLowerCase();
+    return code;
 }
 //#endregion
 
@@ -469,11 +469,16 @@ const keywordCategories =
     "player_emotes": ["comms/social", "emotes"],
     "spaceship_target_hailing": ["vehicle", "targeting", "vehicle - other", "comms/social", "comms - other"],
     "view_director_mode": ["camera"],
-    "": ["", ""],
+    "@ui_hmd_toggle": ["Other", "VR"],
     "": ["", ""],
     "": ["", ""],
 }
-
+function isChromium()
+{
+    return navigator.userAgentData?.brands?.some(b =>
+        /Chromium|Google Chrome|Chrome/i.test(b.brand)
+    ) ?? false;
+}
 
 function resolveKeywords(jsonObj, _name = "name not specified")
 {
@@ -1090,6 +1095,10 @@ function setInputMode(mode)
             joystickDropdownRow.classList.add("collapsed");
         }
     }
+    if (InputState.current === InputModeSelection.CONTROLLER && !isChromium())
+    {
+        alert("Non-chromium browsers work inconsistently with controllers - switch to Chrome/Edge.")
+    }
 }
 
 //#region Splash modal
@@ -1494,7 +1503,6 @@ function exportMappedActionsToXML(actionMapsMasterList)
             const deviceIndex = actionObj.getBindDevice(inputType);
             if (deviceIndex !== undefined && deviceIndex !== null)
             {
-                console.log(actionObj.getActionName());
                 devicesBound.add(deviceIndex);
             }
         }
@@ -1522,6 +1530,21 @@ function exportMappedActionsToXML(actionMapsMasterList)
     // --- END DEVICE BLOCK ---
 
     xml += ` </CustomisationUIHeader>\n`;
+
+    if (importedDeviceConfig)
+    {
+        importedDeviceConfig.deviceOptions.forEach(x =>
+        {
+            xml += x + "\n";
+        });
+
+        importedDeviceConfig.options.forEach(x =>
+        {
+            xml += x + "\n";
+        });
+    }
+
+
     xml += ` <modifiers />\n`;
 
     // Group actions by actionMapName
@@ -1585,7 +1608,63 @@ function exportMappedActionsToXML(actionMapsMasterList)
     return xml;
 }
 // ========== CUSTOM KEYBINDS IMPORTER ==========
-// importCustomKeybindsXML(file, "preserve");
+let importedDeviceConfig = null;
+
+//import helper
+function extractDeviceConfig(xmlDoc)
+{
+    const serializer = new XMLSerializer();
+
+    const deviceConfig = {
+        deviceOptions: [],          // ordered, raw XML strings
+        options: [],                // ordered, raw XML strings
+
+        // optional lookup helpers
+        deviceOptionsByName: {},
+        optionsByKey: {}
+    };
+
+    // ---- <deviceoptions> ----
+    xmlDoc.querySelectorAll("deviceoptions").forEach(node =>
+    {
+        const name = node.getAttribute("name") || null;
+        const xml = serializer.serializeToString(node);
+
+        deviceConfig.deviceOptions.push(xml);
+
+        if (name)
+        {
+            deviceConfig.deviceOptionsByName[name] = xml;
+        }
+    });
+
+    // ---- <options> ----
+    xmlDoc.querySelectorAll("options").forEach(node =>
+    {
+        const type = node.getAttribute("type") || "unknown";
+        const instance = node.getAttribute("instance") || "?";
+        const product = node.getAttribute("Product") || "";
+
+        const key = `${ type }:${ instance }:${ product }`;
+        const xml = serializer.serializeToString(node);
+
+        deviceConfig.options.push(xml);
+        deviceConfig.optionsByKey[key] = xml;
+    });
+
+    return deviceConfig;
+}
+
+//export helper
+function injectDeviceConfigXML(targetArray, deviceConfig)
+{
+    if (!deviceConfig) return;
+
+    deviceConfig.deviceOptions.forEach(xml => targetArray.push(xml));
+    deviceConfig.options.forEach(xml => targetArray.push(xml));
+}
+
+
 async function importCustomKeybindsXML(fileOrUrl, importMethod = "overwrite")
 {
     // fileOrUrl = "C:\Program Files\Roberts Space Industries\StarCitizen\LIVE\user\client\0\controls\mappings\StarBinder_torch.xml"
@@ -1618,6 +1697,7 @@ async function importCustomKeybindsXML(fileOrUrl, importMethod = "overwrite")
         console.error("Error parsing XML");
         return;
     }
+    importedDeviceConfig = extractDeviceConfig(xmlDoc);
 
     xmlDoc.querySelectorAll("actionmap").forEach(map =>
     {
@@ -1735,6 +1815,7 @@ async function importCustomKeybindsXML(fileOrUrl, importMethod = "overwrite")
     });
     saveUserChanges();
 }
+
 //#endregion
 
 
@@ -2035,13 +2116,23 @@ document.addEventListener('keydown', e =>
     //this line
     if (valueDiv)
     {
-        const translated = activeCapture.currentKeysOrdered.map(code => translateKey(code));
+        const translated = activeCapture.currentKeysOrdered.map(keyCode => translateKey(keyCode));
         const bindInProgress = translated.join('+');
         valueDiv.innerHTML !== '' && (valueDiv.innerHTML = '');
         valueDiv.appendChild(renderKeybindKeys(bindInProgress));
     }
 });
-
+// ---------- Key release ----------
+document.addEventListener('keyup', e =>
+{
+    if (recordingActive && InputState.current !== InputModeSelection.KEYBOARD)
+    {
+        return;
+    }
+    if (!activeCapture) return;
+    if (activeCapture.currentKeys.has(e.code)) activeCapture.currentKeys.delete(e.code);
+    if (activeCapture.currentKeysOrdered.length && activeCapture.currentKeys.size === 0) finalizeCapture_Keyboard(activeCapture);
+});
 // ---------- Mouse capture ----------
 document.addEventListener('pointerdown', e =>
 {
@@ -2089,18 +2180,7 @@ document.addEventListener('wheel', e =>
     finalizeCapture_Keyboard(activeCapture, 1);
 }, { passive: false });
 
-// ---------- Key release ----------
-document.addEventListener('keyup', e =>
-{
-    if (recordingActive && InputState.current !== InputModeSelection.KEYBOARD)
-    {
-        return;
-    }
-    if (!activeCapture) return;
-    if (activeCapture.currentKeys.has(e.code)) activeCapture.currentKeys.delete(e.code);
 
-    if (activeCapture.currentKeys.size === 0) finalizeCapture_Keyboard(activeCapture);
-});
 
 // ---------- Finalize capture ----------
 async function finalizeCapture_Keyboard(input, deviceIndex = 1)
@@ -2115,6 +2195,8 @@ async function finalizeCapture_Keyboard(input, deviceIndex = 1)
     const normalKeys = pressedKeys.filter(k => !modifierCodes.has(k) && !Array.from(mouseButtons.values()).includes(k)
     );
     let isValid = true;
+
+    if (!activeCapture.currentKeysOrdered.length) isValid = false;
 
     // Rule 1: No more than one mouse button
     if (mouseKeys.length > 1)
@@ -2153,9 +2235,16 @@ async function finalizeCapture_Keyboard(input, deviceIndex = 1)
             const bindVal = input.dataset;
             const actionName = bindVal.actionName;
             const actionObj = actionMapsMasterList.find(a => a.getActionName() === actionName);
-            valueDiv.innerHTML !== '' && (valueDiv.innerHTML = '');
-            valueDiv.appendChild(renderKeybindKeys(actionObj.getBind(), actionObj.getBind() === actionObj.getDefaultBind()));
+            await applyKeybind(actionObj.getBind(), actionObj.getBindDevice(), input.dataset)
             rowDiv.classList.remove('awaiting');
+
+            // Reset capture state
+            input.currentKeys = new Set();
+            input.currentKeysOrdered = [];
+            input.classList.remove('recording');
+            activeCapture = null;
+
+            updateBindRow(rowDiv);
         }
         return;
     }
@@ -2738,7 +2827,7 @@ function onLoseFocusConsoleInput(e)
 {
     if (e.target)
     {
-        onSubmitKeybindConsole(e);
+        if (e.target.value) onSubmitKeybindConsole(e);
         e.target.blur();
         e.target.value = null;
     }
@@ -2803,7 +2892,30 @@ function onClickRecordKeybind(e)
         {
             if (InputState.current === InputModeSelection.CONTROLLER)
             {
-                pollGamepads();
+                if (!isChromium())
+                {
+                    const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+                    for (let gp of gamepads)
+                    {
+                        if (!gp)
+                        {
+                            recordingActive = false;
+                            activeCapture = null;
+                            return;
+                        }
+                        else if (gp && gp.id.toLowerCase().includes("dualsense"))
+                        {
+                            alert("DualSense controllers can only be mapped using a chromium browser.")
+                            recordingActive = false;
+                            activeCapture = null;
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    pollGamepads();
+                }
             }
             else if (InputState.current === InputModeSelection.JOYSTICK)
             {
@@ -3480,7 +3592,7 @@ function onShowSubcategoryTags()
         Vehicle: ["Engineering", "Salvage", "Mining", "Turrets", "Defences", "Weapons", "Power", "Systems", "MFDs", "Movement", "Targeting", "Vehicle - Other"],
         "On Foot": ["EVA", "Combat", "Emotes", "Equipment", "On Foot - Other"],
         "Comms/Social": ["FOIP/VOIP", "Emotes", "Comms - Other"],
-        "Other": ["MobiGlas", "Interaction", "Optical Tracking", "Spectator"]
+        "Other": ["MobiGlas", "Interaction", "Optical Tracking", "VR", "Spectator"]
     };
 
     const parentTag = document.querySelector(`.tag[data-keyword="${ currentTag }"]`);
@@ -3739,7 +3851,7 @@ function pollGamepads()
     {
         if (!gp) continue;
 
-        const DEADZONE = 0.3;
+        const DEADZONE = 0.25;
         let stickDirection = null;
 
         // Check modifier state
@@ -3815,6 +3927,49 @@ function pollGamepads()
 
     requestAnimationFrame(pollGamepads);
 }
+
+// 0 == lts x
+// 1 == lts y
+// 2 == rts x
+// 3 == left trigger throttle
+// 4 == right trigger throttle
+// 5 == rts y
+// 9 == dpad (hat)
+
+
+// function pollGamepads()
+// {
+//     const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+//     const DEADZONE = 0;
+//     for (let gpIndex = 0; gpIndex < gamepads.length; gpIndex++)
+//     {
+//         const gp = gamepads[gpIndex];
+//         if (!gp) continue;
+
+//         // --- Buttons ---
+//         gp.buttons.forEach((btn, i) =>
+//         {
+//             if (btn.pressed)
+//             {
+//                 console.log(`GP${ gpIndex } BUTTON ${ i } PRESSED`);
+//             }
+//         });
+
+//         // --- Axes ---
+//         gp.axes.forEach((value, i) =>
+//         {
+//             if (Math.abs(value) > DEADZONE)
+//             {
+//                 if (i === 3) btnSelectInput_Controller.textContent = value.toFixed(3)
+//                 console.log(`GP${ gpIndex } AXIS ${ i }: ${ value.toFixed(3) }`);
+//             }
+//         });
+//     }
+
+//     requestAnimationFrame(pollGamepads);
+// }
+
+
 
 // Later, to stop polling:
 function stopPollingGamepads()

@@ -813,9 +813,6 @@ KEYBIND AREA
     font-family: 'Kiona', sans-serif;
     padding-left: 3rem;
     color: var(--secondaryText);
-    /* display: flex;
-    justify-content: center;
-    align-items: center; */
 }
 
 :root {
