@@ -8194,5 +8194,41 @@
         "japanese": "HMD レンズ表示切り替え",
         "korean": "HMD 렌즈 표시 전환",
         "ukrainian": "Перемкнути відображення лінз HMD"
+    },
+    "LAMP_LIGHT_AMPLIFICATION_TOGGLE": {
+        "english": "LAMP: Light Amplification Toggle",
+        "french": "LAMP : Activation de l’amplification lumineuse",
+        "german": "LAMP: Lichtverstärkung umschalten",
+        "italian": "LAMP: Attiva/disattiva amplificazione luminosa",
+        "spanish": "LAMP: Alternar amplificación de luz",
+        "brazillian": "LAMP: Alternar amplificação de luz",
+        "chinese": "LAMP：光线增强切换",
+        "japanese": "LAMP：光増幅 切り替え",
+        "korean": "LAMP: 광 증폭 전환",
+        "ukrainian": "LAMP: Перемикання підсилення світла"
+    },
+    "LAMP_LIGHT_AMPLIFICATION_ON": {
+        "english": "LAMP: Light Amplification On",
+        "french": "LAMP : Amplification lumineuse activée",
+        "german": "LAMP: Lichtverstärkung ein",
+        "italian": "LAMP: Amplificazione luminosa attiva",
+        "spanish": "LAMP: Amplificación de luz activada",
+        "brazillian": "LAMP: Amplificação de luz ativada",
+        "chinese": "LAMP：光线增强开启",
+        "japanese": "LAMP：光増幅 オン",
+        "korean": "LAMP: 광 증폭 켜짐",
+        "ukrainian": "LAMP: Підсилення світла увімкнено"
+    },
+    "LAMP_LIGHT_AMPLIFICATION_OFF": {
+        "english": "LAMP: Light Amplification Off",
+        "french": "LAMP : Amplification lumineuse désactivée",
+        "german": "LAMP: Lichtverstärkung aus",
+        "italian": "LAMP: Amplificazione luminosa disattivata",
+        "spanish": "LAMP: Amplificación de luz desactivada",
+        "brazillian": "LAMP: Amplificação de luz desativada",
+        "chinese": "LAMP：光线增强关闭",
+        "japanese": "LAMP：光増幅 オフ",
+        "korean": "LAMP: 광 증폭 꺼짐",
+        "ukrainian": "LAMP: Підсилення світла вимкнено"
     }
 }

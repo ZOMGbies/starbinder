@@ -6021,5 +6021,38 @@
             "Other",
             "VR"
         ]
+    },
+    "v_light_amplification_toggle": {
+        "label": "LAMP: Light Amplification Toggle",
+        "description": "LAMP (Light AMPlification) - Nightvision for your ship",
+        "keywords": [
+            "nightvision",
+            "vehicle - other",
+            "LAMP",
+            "light amplification",
+            "nv"
+        ]
+    },
+    "v_light_amplification_on": {
+        "label": "LAMP: Light Amplification On",
+        "description": "LAMP (Light AMPlification) - Nightvision for your ship",
+        "keywords": [
+            "nightvision",
+            "vehicle - other",
+            "LAMP",
+            "light amplification",
+            "nv"
+        ]
+    },
+    "v_light_amplification_off": {
+        "label": "LAMP: Light Amplification Off",
+        "description": "LAMP (Light AMPlification) - Nightvision for your ship",
+        "keywords": [
+            "nightvision",
+            "vehicle - other",
+            "LAMP",
+            "light amplification",
+            "nv"
+        ]
     }
 }
