@@ -67,22 +67,22 @@ export const presetData = {
         {
             text: "VKB Gladiator NXT EVO Premium",
             desc: "v4.4 Dual Stick/HOSAS - This profile requires JoyToKey to function properly. Standard grips will require some in-game modifications to the bindings for this profile to work properly as those sticks have fewer buttons. If you are not using the EVO Base, the profile should still work, but may or may not require rebinding of the flight axes.",
-            file: "./presets/BuzzKiller/layout_BK_DualVKB_4-4_exported.xml"
+            file: "./presets/BuzzKiller/layout_BK_DualVKB_4-6_exported.xml"
         },
         {
             text: "Thrustmaster T16000M HOSAS",
             desc: "v4.4 Dual Stick/HOSAS - This profile requires JoyToKey to function properly.",
-            file: "./presets/BuzzKiller/layout_BK_DualT-16_4-4_exported.xml"
+            file: "./presets/BuzzKiller/layout_BK_DualT-16_4-6_exported.xml"
         },
         {
             text: "Thrustmaster T-16000M & FCS Throttle",
             desc: "v4.4 Stick + Throttle/HOTAS - This profile requires JoyToKey to function properly.",
-            file: "./presets/BuzzKiller/layout_BK_FCS-HOTAS_4-4_exported.xml"
+            file: "./presets/BuzzKiller/layout_BK_FCS-HOTAS_4-6_exported.xml"
         },
         {
             text: "Virpil Alpha Prime HOSAS",
             desc: "v4.4 Dual Stick/HOSAS - This profile requires JoyToKey to function properly. This profile was made using the WarBRD gimbals, but it should work regardless of what gimbals you are using. Make sure to update your sticks' firmware and calibrate them using the Vipril Configurator Tool.",
-            file: "./presets/BuzzKiller/layout_BK_DualPrime_4-4_exported.xml"
+            file: "./presets/BuzzKiller/layout_BK_DualPrime_4-6_exported.xml"
         },
         {
             text: "Virpil Alpha Standard HOSAS",
@@ -92,12 +92,12 @@ export const presetData = {
         {
             text: "Virpil Alpha Prime & CM3 Mongoose Throttle",
             desc: "v4.4 Stick + Throttle/HOTAS - Does not require Joy2Key.",
-            file: "./presets/BuzzKiller/layout_BK_PrimeHOTAS_4-4_exported.xml"
+            file: "./presets/BuzzKiller/layout_BK_PrimeHOTAS_4-6_exported.xml"
         },
         {
             text: "Virpil Alpha Standard & CM3 Mongoose Throttle",
             desc: "v4.4 Stick + Throttle/HOTAS - Does not require Joy2Key.",
-            file: "./presets/BuzzKiller/layout_BK_AlphaHOTAS_4-4_exported.xml"
+            file: "./presets/BuzzKiller/layout_BK_AlphaHOTAS_4-6_exported.xml"
         },
 
     ],
