@@ -143,7 +143,7 @@ function getActionDescription(key)
         return key + ": No description available.";
     }
 
-    return desc;
+    return desc + "<br><br>" + key;
 }
 
 function getActionKeywords(key)
@@ -2701,7 +2701,7 @@ function ShowKeybindDescription()
 
     if (currentKeyBind)
     {
-        box.textContent = desc;
+        box.innerHTML = desc;
         keybindDescriptionTags.innerHTML !== '' && (keybindDescriptionTags.innerHTML = '');
 
         listOfKeywords.forEach(keyword =>
