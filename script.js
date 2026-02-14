@@ -1973,7 +1973,7 @@ function updatefilteredNames()
             filtered.forEach(item =>
             {
                 const bind = item.getBind();
-                if (!bind) return; // skip unbound
+                if (!bind || bind === " ") return; // skip unbound
 
                 const device = item.getBindDevice();
                 const key = `${ bind }|${ device }`;
