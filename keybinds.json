@@ -6076,10 +6076,9 @@
     },
     "v_toggle_docking_request": {
         "label": "Docking Request Toggle",
-        "description": "Contacts Air Traffic Control to request docking with a station as opposed to reserving a hangar.",
+        "description": "Command module docking request.",
         "keywords": [
-            "ATC",
-            "Air traffic control",
+            "command module",
             "flight - movement",
             "flight",
             "movement",
