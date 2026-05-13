@@ -6049,10 +6049,44 @@
         "description": "LAMP (Light AMPlification) - Nightvision for your ship",
         "keywords": [
             "nightvision",
+            "night vision",
             "vehicle - other",
             "LAMP",
             "light amplification",
             "nv"
+        ]
+    },
+    "v_toggle_refuel_mode": {
+        "label": "Refuel Mode Toggle",
+        "description": "Switch into refuelling mode",
+        "keywords": [
+            "fuel",
+            "refuel",
+            "vehicle - other"
+        ]
+    },
+    "v_set_refuel_mode": {
+        "label": "Refuel Mode Set",
+        "description": "Switch into refuelling mode",
+        "keywords": [
+            "fuel",
+            "refuel",
+            "vehicle - other"
+        ]
+    },
+    "v_toggle_docking_request": {
+        "label": "Docking Request Toggle",
+        "description": "Contacts Air Traffic Control to request docking with a station as opposed to reserving a hangar.",
+        "keywords": [
+            "ATC",
+            "Air traffic control",
+            "flight - movement",
+            "flight",
+            "movement",
+            "systems",
+            "landing",
+            "dock",
+            "docking"
         ]
     }
 }

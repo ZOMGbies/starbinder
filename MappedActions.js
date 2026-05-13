@@ -1,6 +1,3 @@
-// AUTO-GENERATED FILE — DO NOT EDIT
-// Generated from: ./actionsXML/defaultProfile.xml
-
 export const mappedActionSource = [
   {
     "actionName": "v_emergency_exit",
@@ -94,6 +91,25 @@ export const mappedActionSource = [
     "UICategory": "@ui_CCSeatGeneral",
     "label": "@ui_CISalvageMode",
     "description": "@ui_CISalvageModeDesc",
+    "version": "1",
+    "optionGroup": null
+  },
+  {
+    "actionName": "v_toggle_refuel_mode",
+    "mapName": "seat_general",
+    "keyboardBind": "m",
+    "mouseBind": null,
+    "gamepadBind": null,
+    "joystickBind": null,
+    "keyboardBindable": true,
+    "mouseBindable": false,
+    "gamepadBindable": true,
+    "joystickBindable": true,
+    "activationMode": "press",
+    "category": "ShipSystems",
+    "UICategory": "@ui_CCSeatGeneral",
+    "label": "@ui_CIRefuelMode",
+    "description": "@ui_CIRefuelModeDesc",
     "version": "1",
     "optionGroup": null
   },
@@ -227,6 +243,25 @@ export const mappedActionSource = [
     "UICategory": "@ui_CCSeatGeneral",
     "label": "@ui_v_set_salvage_mode",
     "description": "@ui_v_set_salvage_mode_desc",
+    "version": "1",
+    "optionGroup": null
+  },
+  {
+    "actionName": "v_set_refuel_mode",
+    "mapName": "seat_general",
+    "keyboardBind": null,
+    "mouseBind": null,
+    "gamepadBind": null,
+    "joystickBind": null,
+    "keyboardBindable": true,
+    "mouseBindable": false,
+    "gamepadBindable": true,
+    "joystickBindable": true,
+    "activationMode": "press",
+    "category": null,
+    "UICategory": "@ui_CCSeatGeneral",
+    "label": "@ui_v_set_refuel_mode",
+    "description": "@ui_v_set_refuel_mode_desc",
     "version": "1",
     "optionGroup": null
   },
@@ -3366,6 +3401,25 @@ export const mappedActionSource = [
     "optionGroup": null
   },
   {
+    "actionName": "v_toggle_docking_request",
+    "mapName": "spaceship_movement",
+    "keyboardBind": "ralt+n",
+    "mouseBind": null,
+    "gamepadBind": null,
+    "joystickBind": null,
+    "keyboardBindable": true,
+    "mouseBindable": false,
+    "gamepadBindable": false,
+    "joystickBindable": false,
+    "activationMode": "tap",
+    "category": null,
+    "UICategory": "@ui_CCSpaceFlight",
+    "label": "@ui_CIToggleLandingSystem_Dock",
+    "description": "ui_CIToggleLandingSystem_DockDesc",
+    "version": "18",
+    "optionGroup": null
+  },
+  {
     "actionName": "v_deploy_landing_system",
     "mapName": "spaceship_movement",
     "keyboardBind": null,
@@ -5374,7 +5428,7 @@ export const mappedActionSource = [
     "activationMode": "press",
     "category": "MiningMode",
     "UICategory": "@ui_CCSpaceFlight",
-    "label": "@ui_CIMiningConsumable1",
+    "label": "@ui_CIMiningLaserType",
     "description": "@ui_CIMiningConsumableDesc",
     "version": "1",
     "optionGroup": null
@@ -9490,7 +9544,7 @@ export const mappedActionSource = [
     "mouseBind": null,
     "gamepadBind": null,
     "joystickBind": null,
-    "keyboardBindable": false,
+    "keyboardBindable": true,
     "mouseBindable": false,
     "gamepadBindable": true,
     "joystickBindable": true,
@@ -9509,7 +9563,7 @@ export const mappedActionSource = [
     "mouseBind": null,
     "gamepadBind": null,
     "joystickBind": null,
-    "keyboardBindable": false,
+    "keyboardBindable": true,
     "mouseBindable": false,
     "gamepadBindable": true,
     "joystickBindable": true,
@@ -13568,4 +13622,4 @@ export const mappedActionSource = [
     "version": "1",
     "optionGroup": null
   }
-];
+];  
